@@ -11,78 +11,203 @@
   </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
-		<!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
-		integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
 
-		<!-- Optional theme -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
-		integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" />
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
+integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" />
 
-		<!-- Latest compiled and minified JavaScript -->
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
-		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-		<!-- Bootstrap Date-Picker Plugin -->
+<!-- Bootstrap Date-Picker Plugin -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 
 <script type="text/babel">
-  class App extends React.Component {
-	render() {
-		return (
+var eventArray = [];
+class App extends React.Component {
+render() {
+	return (
+		<div>
 			<Form />
-		);
-    }
-  }
+			<GetSqlData />
+		</div>
+	);
+	}
+}
 
-	class Form extends React.Component {
-		constructor(){
-			super();
-			this.handleChange = this.handleChange.bind(this);
-			this.state = {
-				event: "",
-				date: ""
-			};
-		}
-
-		handleChange(e){
-			this.setState({date: $('#eventDate').val()});
-		}
-
-		render(){
-			return (
-			<div className="row">
-        <div className='col-sm-6'>
-            <div className="form-group">
-                <div className='input-group date' id='datetimepicker1'>
-                    <input type='text' className="form-control"  id="eventDate" onClick={this.handleChange}/>
-                    <span className="input-group-addon">
-                        <span className="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
-            </div>
-        </div>
-				<button name="" id="nn" className="btn btn-primary">Send</button>
-    </div>
-			);
-		} 
-
+class Form extends React.Component {
+	constructor(){
+		super();
+		this.handleClick = this.handleClick.bind(this);
+		this.handleChange = this.handleChange.bind(this);
+		this.handleDescChange = this.handleDescChange.bind(this);
+		this.handlePost = this.handlePost.bind(this);
+		this.state = {
+			event: "",
+			date: "",
+			desc: "",
+		};
 	}
 
+	handleClick(e){
+		this.setState({date: $('#eventDate').val()});
+	}
+
+	handleChange(e){
+		this.setState({event: e.target.value})
+	}
+
+
+	handleDescChange(e){
+		this.setState({desc: e.target.value})
+	}
+
+	handlePost(){
+		if(this.state.event === "" && this.state.date === "") {
+			alert("Täytä nimi ja päivämäärä");
+		}
+		else if(this.state.event === "") {
+			alert("Täytä nimi");
+		}
+		else if(this.state.date === ""){
+			alert("Täytä päivämäärä");
+		}
+		else{
+			console.log("POST");
+			fetch('http://localhost:8080/api/events', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					title: this.state.event,
+					desc: this.state.desc,
+					date: this.state.date
+				})
+			})
+			}
+	}
+
+	render(){
+		return (
+		<div className="row">
+			<br />
+			<div className='col-sm-6'>
+				<div className="form-group">
+					<div className='input-group date' id='datetimepicker1'>
+						<input type='text' className="form-control"  id="eventDate" onClick={this.handleClick} placeholder="Päivämäärä" required="true"/>
+						<span className="input-group-addon">
+							<span className="glyphicon glyphicon-calendar"></span>
+						</span>
+					</div>
+					<h3>Event:</h3>
+					<input className="form-control" onChange={this.handleChange} />
+					<h3>Desc:</h3>
+					<textarea className="form-control" rows="3" onChange={this.handleDescChange}> </textarea>
+					<lable>
+						<input type="checkbox" />
+						Tärkeä
+					</lable>
+					<br />
+				</div>
+				<button className="btn btn-primary" onClick={this.handlePost} >Lisää muistiinpano</button>
+			</div>
+		</div>
+		);
+	} 
+
+}
+
+class GetSqlData extends React.Component {
+	
+	constructor(){
+		super();
+		this.fetchEvents = this.fetchEvents.bind(this);
+		this.state = {
+			eventStateArray: []
+		}
+	}
+
+fetchEvents(){
+	eventArray = [];
+	console.log("Fetching...");
+	fetch("http://localhost:8080/api/events")
+	.then(result => result.json())
+	.then(result => {
+	for(var i = 0; i < result._embedded.events.length; i++){
+		eventArray.push({
+			title: result._embedded.events[i].title,
+			date: result._embedded.events[i].date,
+			desc: result._embedded.events[i].desc
+		});
+		this.setState({asd: "asd"})
+		console.log( result._embedded.events[0].title );
+	}
+	console.log(eventArray);
+	})
+	.catch(err => console.log(err))
+}
+
+	render(){
+		return(
+			<div>
+				<button onClick={this.fetchEvents} id="eventBtn">Hae Tapahtumat</button>
+				<EventTable data={eventArray} />
+			</div>
+		);
+	}
+}
+
+class EventTable extends React.Component {
+	render(){
+		var rows = this.props.data.map(item => 
+			<EventItem item={item} />
+		);
+	return (
+      <table className='table table-striped'>
+        <thead>
+          <tr>
+            <th>Tapahtuman Päivämäärä</th>
+			<th>Tapahtuman nimi</th>
+			<th>Tapahtuman selitys</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    );
+	}
+}  
+
+class EventItem extends React.Component {
+	render(){
+	return (
+		<tr>
+			<td>{this.props.item.date}</td>
+			<td>{this.props.item.title}</td>
+			<td>{this.props.item.desc}</td>
+		</tr>
+	);
+	}
+}
 
 ReactDOM.render(<App />, document.getElementById('root') );	
 </script>
 
 <script type="text/javascript">
-		$(function () {
+		$(document).ready(function () {
 			$('#datetimepicker1').datepicker().on('changeDate', function () {
 				$('#eventDate').click();
 			});
+			$('#eventBtn').click();
 		});
  </script>
 </body>
