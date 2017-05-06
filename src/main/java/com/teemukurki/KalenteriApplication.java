@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 
 import com.teemukurki.domain.Event;
 import com.teemukurki.domain.EventRepository;
+import com.teemukurki.domain.User;
+import com.teemukurki.domain.UserRepository;
 
 @SpringBootApplication
 public class KalenteriApplication {
@@ -17,11 +19,12 @@ public class KalenteriApplication {
 	
 	@Bean
 	
-	public CommandLineRunner demo(EventRepository repo) {
+	public CommandLineRunner demo(EventRepository erepo, UserRepository urepo) {
 		return (args) -> {
-			repo.save(new Event("Tilaisuus1","05/03/2017","Hauskaa"));
-			repo.save(new Event("Tilaisuus2","07/03/2017","Kivaa"));
-			repo.save(new Event("Tilaisuus2","09/03/2017","Mukavaa"));
+			erepo.save(new Event("Tilaisuus1","05/03/2017","Hauskaa"));
+			erepo.save(new Event("Tilaisuus2","07/03/2017","Kivaa"));
+			erepo.save(new Event("Tilaisuus2","09/03/2017","Mukavaa"));
+			urepo.save(new User("user", "$2a$06$3jYRJrg0ghaaypjZ/.g4SethoeA51ph3UD4kZi9oPkeMTpjKU5uo6", "USER"));
 		};
 	}
 }

@@ -3,6 +3,9 @@
 
 <head>
     <title>React Kalenteri</title>
+	<meta name="_csrf" content="${_csrf.token}"/>
+	<!-- default header name is X-CSRF-TOKEN -->
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 
 <body>
@@ -72,6 +75,9 @@ class Form extends React.Component {
 	}
 
 	handlePost(){
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+
 		if(this.state.event === "" && this.state.date === "") {
 			alert("Täytä nimi ja päivämäärä");
 		}
@@ -86,8 +92,10 @@ class Form extends React.Component {
 			fetch('http://localhost:8080/api/events', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					header: token
 				},
+				credentials: "same-origin",
 				body: JSON.stringify({
 					title: this.state.event,
 					desc: this.state.desc,
@@ -139,7 +147,9 @@ class GetSqlData extends React.Component {
 fetchEvents(){
 	eventArray = [];
 	console.log("Fetching...");
-	fetch("http://localhost:8080/api/events")
+	fetch("http://localhost:8080/api/events", {
+		credentials: "same-origin"
+	})
 	.then(result => result.json())
 	.then(result => {
 	for(var i = 0; i < result._embedded.events.length; i++){
@@ -198,6 +208,7 @@ class EventItem extends React.Component {
 		console.log(link);
 		fetch(link, {
 			method: 'DELETE',
+			credentials: "same-origin",
 		})
 	}
 
