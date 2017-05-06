@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>React + Spring</title>
+    <title>React Kalenteri</title>
 </head>
 
 <body>
@@ -128,12 +128,11 @@ class Form extends React.Component {
 }
 
 class GetSqlData extends React.Component {
-	
 	constructor(){
 		super();
 		this.fetchEvents = this.fetchEvents.bind(this);
 		this.state = {
-			eventStateArray: []
+			asd: ""
 		}
 	}
 
@@ -147,11 +146,11 @@ fetchEvents(){
 		eventArray.push({
 			title: result._embedded.events[i].title,
 			date: result._embedded.events[i].date,
-			desc: result._embedded.events[i].desc
+			desc: result._embedded.events[i].desc,
+			link: result._embedded.events[i]._links.self.href
 		});
-		this.setState({asd: "asd"})
-		console.log( result._embedded.events[0].title );
 	}
+	this.setState({asd: "asd"});
 	console.log(eventArray);
 	})
 	.catch(err => console.log(err))
@@ -179,6 +178,7 @@ class EventTable extends React.Component {
             <th>Tapahtuman Päivämäärä</th>
 			<th>Tapahtuman nimi</th>
 			<th>Tapahtuman selitys</th>
+			<th>Poista tapahtuma</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>
@@ -188,12 +188,26 @@ class EventTable extends React.Component {
 }  
 
 class EventItem extends React.Component {
+	constructor(){
+		super();
+		this.deleteEvent = this.deleteEvent.bind(this);
+	}
+
+	deleteEvent(link){
+		console.log("DELETE");
+		console.log(link);
+		fetch(link, {
+			method: 'DELETE',
+		})
+	}
+
 	render(){
 	return (
 		<tr>
 			<td>{this.props.item.date}</td>
 			<td>{this.props.item.title}</td>
 			<td>{this.props.item.desc}</td>
+			<td><button onClick={() => this.deleteEvent(this.props.item.link)}>Poista</button></td>
 		</tr>
 	);
 	}
