@@ -140,30 +140,42 @@ class GetSqlData extends React.Component {
 		super();
 		this.fetchEvents = this.fetchEvents.bind(this);
 		this.state = {
-			asd: ""
+			user: "",
+			userLink: ""
 		}
 	}
 
 fetchEvents(){
 	eventArray = [];
-	console.log("Fetching...");
-	fetch("http://localhost:8080/api/events", {
-		credentials: "same-origin"
+	fetch('http://localhost:8080/user', {
+		credentials: "same-origin",
 	})
 	.then(result => result.json())
 	.then(result => {
-	for(var i = 0; i < result._embedded.events.length; i++){
-		eventArray.push({
-			title: result._embedded.events[i].title,
-			date: result._embedded.events[i].date,
-			desc: result._embedded.events[i].desc,
-			link: result._embedded.events[i]._links.self.href
-		});
-	}
-	this.setState({asd: "asd"});
-	console.log(eventArray);
+		fetch("http://localhost:8080/api/users/search/findByUsername?username="+result.principal.username, {
+			credentials: "same-origin"
+		})
+		.then(result2 => result2.json())
+		.then(result2 => {
+			fetch(result2._links.events.href, {
+				credentials: "same-origin"
+			})
+			.then(result3 => {
+				console.log(result3._embedded);
+				for(var i = 0; i < result3._embedded.events.length; i++){
+					eventArray.push({
+						title: result3._embedded.events[i].title,
+						date: result3._embedded.events[i].date,
+						desc: result3._embedded.events[i].desc,
+						link: result3._embedded.events[i]._links.self.href
+					});
+				}
+				this.setState({asd: "asd"});
+				console.log(eventArray);
+			})
+			.catch(err => console.log(err))
+			})
 	})
-	.catch(err => console.log(err))
 }
 
 	render(){

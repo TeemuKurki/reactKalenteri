@@ -21,10 +21,13 @@ public class KalenteriApplication {
 	
 	public CommandLineRunner demo(EventRepository erepo, UserRepository urepo) {
 		return (args) -> {
-			erepo.save(new Event("Tilaisuus1","05/03/2017","Hauskaa"));
-			erepo.save(new Event("Tilaisuus2","07/03/2017","Kivaa"));
-			erepo.save(new Event("Tilaisuus2","09/03/2017","Mukavaa"));
-			urepo.save(new User("user", "$2a$06$3jYRJrg0ghaaypjZ/.g4SethoeA51ph3UD4kZi9oPkeMTpjKU5uo6", "USER"));
+			User user = new User("user", "$2a$06$3jYRJrg0ghaaypjZ/.g4SethoeA51ph3UD4kZi9oPkeMTpjKU5uo6", "USER");
+			User admin = new User("admin", "$2a$06$3jYRJrg0ghaaypjZ/.g4SethoeA51ph3UD4kZi9oPkeMTpjKU5uo6", "USER");
+			urepo.save(user);
+			urepo.save(admin);
+			erepo.save(new Event("Tilaisuus1","05/03/2017","Hauskaa", user));
+			erepo.save(new Event("Tilaisuus2","07/03/2017","Kivaa", user));
+			erepo.save(new Event("Tilaisuus2","09/03/2017","Mukavaa", admin));
 		};
 	}
 }
