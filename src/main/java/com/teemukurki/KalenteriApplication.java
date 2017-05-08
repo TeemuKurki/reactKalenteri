@@ -25,9 +25,11 @@ public class KalenteriApplication {
 			User admin = new User("admin", "$2a$06$3jYRJrg0ghaaypjZ/.g4SethoeA51ph3UD4kZi9oPkeMTpjKU5uo6", "USER");
 			urepo.save(user);
 			urepo.save(admin);
-			erepo.save(new Event("Tilaisuus1","05/03/2017","Hauskaa", user));
-			erepo.save(new Event("Tilaisuus2","07/03/2017","Kivaa", user));
-			erepo.save(new Event("Tilaisuus2","09/03/2017","Mukavaa", admin));
+			Event e1 = new Event("Tilaisuus1","05/03/2017","Hauskaa", "user", user);
+			erepo.save(e1);
+			erepo.save(new Event("Tilaisuus2","07/03/2017","Kivaa", "user", user));
+			erepo.save(new Event("Tilaisuus2","09/03/2017","Mukavaa", "admin", admin));
+			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!"+e1.getUsername().getUsername());
 		};
 	}
 }

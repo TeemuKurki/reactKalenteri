@@ -3,9 +3,6 @@
 
 <head>
     <title>React Kalenteri</title>
-	<meta name="_csrf" content="${_csrf.token}"/>
-	<!-- default header name is X-CSRF-TOKEN -->
-	<meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 
 <body>
@@ -37,11 +34,39 @@ integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7T
 <script type="text/babel">
 var eventArray = [];
 class App extends React.Component {
+	constructor(props){
+		super(props);
+		this.componentWillMount = this.componentWillMount.bind(this);
+		this.state = {
+			link: "",
+			username: "",
+		}
+
+	}
+	componentWillMount(){
+		fetch("http://localhost:8080/user", {
+			credentials: "same-origin"
+		})
+		.then(result => result.json())
+		.then(result => {
+			this.setState({username: result.username});
+			fetch("http://localhost:8080/api/users/search/findByUsername?username="+result.username, {
+				credentials: "same-origin"
+			})
+			.then(result => result.json())
+			.then(result => {
+				this.setState({link: result._links.events.href});
+			});
+		})
+	}
+
 render() {
 	return (
 		<div>
-			<Form />
-			<GetSqlData />
+			<Form link={this.state.link} username={this.state.username} style="border: solid black 1px"/>
+			<br />
+			<GetSqlData link={this.state.link} />
+			<a name="" id="" class="btn btn-info" href="/logout" role="button">Kirjaudu ulos</a>
 		</div>
 	);
 	}
@@ -75,9 +100,6 @@ class Form extends React.Component {
 	}
 
 	handlePost(){
-		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
-
 		if(this.state.event === "" && this.state.date === "") {
 			alert("Täytä nimi ja päivämäärä");
 		}
@@ -89,25 +111,26 @@ class Form extends React.Component {
 		}
 		else{
 			console.log("POST");
-			fetch('http://localhost:8080/api/events', {
+			fetch("http://localhost:8080/add", {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					header: token
 				},
 				credentials: "same-origin",
 				body: JSON.stringify({
 					title: this.state.event,
 					desc: this.state.desc,
-					date: this.state.date
+					date: this.state.date,
+					name: this.props.username
 				})
-			})
+			}).then(result => console.log(result))
 			}
 	}
 
 	render(){
 		return (
 		<div className="row">
+			
 			<br />
 			<div className='col-sm-6'>
 				<div className="form-group">
@@ -136,46 +159,35 @@ class Form extends React.Component {
 }
 
 class GetSqlData extends React.Component {
-	constructor(){
-		super();
+	constructor(props){
+		super(props);
 		this.fetchEvents = this.fetchEvents.bind(this);
 		this.state = {
-			user: "",
-			userLink: ""
+			asd: ""
 		}
 	}
 
 fetchEvents(){
 	eventArray = [];
-	fetch('http://localhost:8080/user', {
-		credentials: "same-origin",
+	console.log("Fetching...");
+	console.log(this.props);
+	fetch(this.props.link, {
+		credentials: "same-origin"
 	})
 	.then(result => result.json())
 	.then(result => {
-		fetch("http://localhost:8080/api/users/search/findByUsername?username="+result.principal.username, {
-			credentials: "same-origin"
-		})
-		.then(result2 => result2.json())
-		.then(result2 => {
-			fetch(result2._links.events.href, {
-				credentials: "same-origin"
-			})
-			.then(result3 => {
-				console.log(result3._embedded);
-				for(var i = 0; i < result3._embedded.events.length; i++){
-					eventArray.push({
-						title: result3._embedded.events[i].title,
-						date: result3._embedded.events[i].date,
-						desc: result3._embedded.events[i].desc,
-						link: result3._embedded.events[i]._links.self.href
-					});
-				}
-				this.setState({asd: "asd"});
-				console.log(eventArray);
-			})
-			.catch(err => console.log(err))
-			})
+	for(var i = 0; i < result._embedded.events.length; i++){
+		eventArray.push({
+			title: result._embedded.events[i].title,
+			date: result._embedded.events[i].date,
+			desc: result._embedded.events[i].desc,
+			link: result._embedded.events[i]._links.self.href
+		});
+	}
+	this.setState({asd: "asd"});
+	console.log(eventArray);
 	})
+	.catch(err => console.log(err))
 }
 
 	render(){
@@ -210,8 +222,8 @@ class EventTable extends React.Component {
 }  
 
 class EventItem extends React.Component {
-	constructor(){
-		super();
+	constructor(props){
+		super(props);
 		this.deleteEvent = this.deleteEvent.bind(this);
 	}
 

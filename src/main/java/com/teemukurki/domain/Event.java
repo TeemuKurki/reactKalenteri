@@ -19,6 +19,7 @@ public class Event {
 	private String title;
 	private String date;
 	private String desc;
+	private String name;
 
 	@ManyToOne
 	@JsonIgnore
@@ -28,11 +29,12 @@ public class Event {
 	public Event() {
 		super();
 	}
-	public Event(String title, String date, String desc, User username) {
+	public Event(String title, String date, String desc, String name, User username) {
 		super();
 		this.title = title;
 		this.date = date;
 		this.desc = desc;
+		this.name = name;
 		this.username = username;
 	}
 	public long getId(){
@@ -66,6 +68,12 @@ public class Event {
 
 	public void setUsername(){
 		this.username = username;
+	}
+	public String getName(){
+		return name;
+	}
+	public void setName(){
+		this.name = name;
 	}
 	
 	
