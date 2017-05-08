@@ -1,0 +1,19 @@
+#logoutBtn{
+ float: right;
+}
+
+#datetimepicker1 {
+    width: 50%;
+}
+
+#modalTextarea {
+    resize: vertical;
+}
+
+#eventBtn {
+
+}
+
+td, th {
+   text-align: center;
+}
