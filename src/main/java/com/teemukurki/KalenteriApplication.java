@@ -29,7 +29,6 @@ public class KalenteriApplication {
 			erepo.save(e1);
 			erepo.save(new Event("Tilaisuus2","07/03/2017","Kivaa", "user", user));
 			erepo.save(new Event("Tilaisuus2","09/03/2017","Mukavaa", "admin", admin));
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!"+e1.getUsername().getUsername());
 		};
 	}
 }

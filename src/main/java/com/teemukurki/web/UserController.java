@@ -34,13 +34,8 @@ public class UserController {
 	
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	public void addEvent(@RequestBody Event e1){
-		System.out.println(e1.getId());
-		System.out.println(e1.getDate());
-		System.out.println(e1.getDesc());
-		System.out.println(e1.getTitle());
 		Event ev = new Event(e1.getTitle(), e1.getDate(), e1.getDesc(), e1.getName(), urepo.findByUsername(e1.getName()));
 		erepo.save(ev);
-		System.out.println("AAAA"+ev.getUsername().getUsername());
 		
 	}
 }
